@@ -1,8 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { BrowserRouter as Router, Route, Switch, Redirect } from 'react-router-dom';
 import Home from './pages/Home';
-import Signup from './pages/Signup.js';
+import Signup from './pages/Signup';
 import Login from './pages/Login';
+import Room from './pages/Room';
+import NavBar from './components/NavBar';
 import Chat from './components/Chat';
 
 import { auth } from './services/firebase';
@@ -12,23 +14,21 @@ function PrivateRoute({ component: Component, authenticated, ...rest }) {
   return (
     <Route 
       {...rest}
-      render={props => 
-        authenticated === true ? <Component {...props} />
-          : ( 
-            <Redirect to={{ pathname: '/login', state: { from: props.location } }} />
-          )}
+      render={props => authenticated === true 
+        ? <Component {...props} />
+          : <Redirect to={{ pathname: '/login', state: { from: props.location } }} />
+      }
     />
   );
 }
 
 function PublicRoute({ component: Component, authenticated, ...rest }) {
-  console.log('Auth: ' + authenticated);
   return (
     <Route
       {...rest}
-      render={props => 
-        authenticated === false ? <Component {...props} /> 
-        : <Redirect to={{pahtname: '/chat'}} />
+      render={props => authenticated === false 
+        ? <Component {...props} /> 
+        : <Redirect to='/room' />
       }
     />
   );
@@ -44,8 +44,7 @@ function App() {
   };
 
   useEffect(() => {
-    auth().onAuthStateChanged(user => {
-      console.log(user);
+    auth.onAuthStateChanged(user => {
       if (user) { // logged in 
         console.log('logged in');
         setAuthenticated(true);
@@ -55,17 +54,19 @@ function App() {
         setAuthenticated(false);
         setLoading(false);
       }
-    })
+    });
   }, []);
 
   return loading ? ( <div><CircularProgress style={progress} /></div> ) : 
    (
     <Router>
+		  <NavBar />
       <Switch>
         <Route exact path="/" component={Home} />
-        <PrivateRoute path="/chat" authenticated={authenticated} component={Chat} />
-        <PublicRoute path="/login" authenticated={authenticated} component={Login} />
+        <PrivateRoute path="/room" authenticated={authenticated} component={Room} />
+        <PrivateRoute path="/t/:username" authenticated={authenticated} component={Chat} />
         <PublicRoute path="/signup" authenticated={authenticated} component={Signup} />
+        <PublicRoute path="/login" authenticated={authenticated} component={Login} />
       </Switch>
     </Router>
   );

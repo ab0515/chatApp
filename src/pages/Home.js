@@ -1,16 +1,15 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import NavBar from '../components/NavBar';
 
 import { Typography } from '@material-ui/core';
 
-const Home = () => {
+const Home = (props) => {
+
 	return (
-		<div>
-			<NavBar />
+		<div>			
 			<Typography variant="h5">Welcome</Typography>
 
-			<Typography><Link to="/signup">Create an account</Link></Typography>
+			<Typography><Link to="/signup">Create a new account</Link></Typography>
 			<Typography><Link to="/login">Login to your account</Link></Typography>
 		</div>
 	);

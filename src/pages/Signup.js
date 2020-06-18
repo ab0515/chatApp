@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 import { Typography, Container, TextField, Button, Grid } from '@material-ui/core';
 import withStyles from '@material-ui/core/styles/withStyles';
 
-import { signup, authMiddleWare } from '../util/auth';
+import { signup } from '../util/auth';
 
 const styles = theme => ({
 	root: {
@@ -28,10 +28,6 @@ const Signup = (props) => {
 		username: ''
 	});
 
-	useEffect(() => {
-		authMiddleWare(props.history);
-	}, []);
-
 	const handleChange = (e) => {
 		const {
 			target: { name, value }
@@ -45,8 +41,7 @@ const Signup = (props) => {
 	const handleSubmit = (e) => {
 		e.preventDefault();
 		try {
-			const token = signup(user.username, user.email, user.password);
-			sessionStorage.setItem('AuthToken', `Bearer ${token}`);
+			signup(user.username, user.email, user.password);
 		} catch (err) {
 			console.log(err);
 		}
@@ -98,7 +93,7 @@ const Signup = (props) => {
 						<Grid container className={classes.gridContainer}>
 							<Grid item xs>
 								<Typography variant="body2">
-									<Link to="/login" className={classes.link}>Already have an account?</Link>
+									Already have an account? <Link to="/login" className={classes.link}>Log in</Link>
 								</Typography>
 							</Grid>
 						</Grid>

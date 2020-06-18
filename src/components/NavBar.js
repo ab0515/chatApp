@@ -1,8 +1,7 @@
 import React, { useState } from 'react';
-import { Redirect } from 'react-router-dom';
+import { Redirect, useHistory, useLocation } from 'react-router-dom';
 import { AppBar, Toolbar, Typography, Button } from '@material-ui/core';
 import withStyles from '@material-ui/core/styles/withStyles';
-
 import { signout } from '../util/auth';
 
 const styles = (theme) => ({
@@ -15,25 +14,31 @@ const styles = (theme) => ({
 });
 
 const NavBar = (props) => {
+	const history = useHistory();
+	const location = useLocation();
 	const { classes } = props;
-	const [ signedout, setSignedout ] = useState(false);
 
-	const logout = (e) => {
+	const handleLogout = async (e) => {
 		e.preventDefault();
-		signout();
-		setSignedout(true);
+		let res = await signout();
+		console.log(res);
+		history.push('/login');
 	};
 
-	return signedout ? <div><Redirect to={{ pathname: '/login' }} /></div> : (
-		<div className={classes.root}>
-			<AppBar position="static">
-				<Toolbar>
-					<Typography variant="h6" className={classes.title}>LetsChat</Typography>
-					<Button color="inherit" onClick={logout}>Log Out</Button>
-				</Toolbar>
-			</AppBar>
-		</div>
-	);
+	if (location.pathname === '/signup' || location.pathname === '/login') {
+		return false;
+	} else {
+		return (
+			<div className={classes.root}>
+				<AppBar position="static">
+					<Toolbar>
+						<Typography variant="h6" className={classes.title}>LetsChat</Typography>
+						<Button color="inherit" onClick={handleLogout}>Log Out</Button>
+					</Toolbar>
+				</AppBar>
+			</div>
+		);
+	}
 };
 
 export default withStyles(styles)(NavBar);
