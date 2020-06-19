@@ -21,24 +21,44 @@ const Chat = (props) => {
 	let location = useLocation();
 	const { initializing, user } = useAuth();
 	const [roomName, setRoomName] = useState('');
+	const [error, setError] = useState('');
 	const [text, setText] = useState('');
 	const [chats, setChats] = useState('');
 	const [loading, setLoading] = useState(true);
+	const [sender, setSender] = useState('');
 
 	useEffect(() => {
+		let name;
 		if (user.uid < location.state.receiver) {
-			setRoomName(user.uid + location.state.receiver);
+			name = user.uid + location.state.receiver;
 		} else {
-			setRoomName(location.state.receiver + user.uid);
+			name = location.state.receiver + user.uid;
 		}
+
+		setRoomName(name);
+		const unsubscribe = loadMessage(name, {
+			next: querySnapShot => {
+				const updatedData = querySnapShot.docs.map(snapshot => snapshot.data());
+				setChats(updatedData);
+				setLoading(false);
+			},
+			error: () => setError('Message loading failed')
+		});
+			// .onSnapshot(snap => {
+			// const data = snap.docs.map(doc => doc.data());
+			// console.log(data);
+			// setChats(data);
+		// });
+
+		return unsubscribe;
 	}, [location]);
 
 	useEffect(() => {
-		console.log(user.uid);
 		getUser(user.uid)
 			.then(doc => {
 				let data = doc.data();
 				console.log(data);
+				setSender(data.username);
 			})
 			.catch(err => {
 				console.log('Error retrieving user data', err);
@@ -49,26 +69,51 @@ const Chat = (props) => {
 		setText(e.target.value);
 	};
 
-	// const handleSubmit = (e) => {
-	// 	e.preventDefault();
-	// 	let data = {
-	// 		text: text,
-	// 		sentAt: new Date().toISOString(),
-	// 		sender: sender
-	// 	};
+	const handleSubmit = (e) => {
+		e.preventDefault();
+		let data = {
+			text: text,
+			sentAt: new Date().toISOString(),
+			sender: sender
+		};
 
-	// 	saveMessage(roomName, data)
-	// 		.then(() => {
-	// 			setText('');
-	// 			console.log('Successfully sent message');
-	// 		})
-	// 		.catch(err => {
-	// 			console.log('Error writing a message', err);
-	// 		});
-	// };
+		saveMessage(roomName, data)
+			.then(() => {
+				setText('');
+				console.log('Successfully sent message');
+			})
+			.catch(err => {
+				console.log('Error writing a message', err);
+			});
+	};
 
-	return (
-		<div>Message sent by</div>
+	return loading ? <CircularProgress size={40} position="static" /> : (
+		<div>
+			<div className={classes.msgArea}>
+				{
+					chats.map(chat => (
+						<li key={chat.sentAt}>{chat.text}</li>
+					))
+				}
+			</div>
+			<Container component="main">
+				<form noValidate>
+					<Grid container className={classes.input}>
+						<Grid item xs={12} md={10}>
+							<TextField 
+								name="text" 
+								value={text} 
+								onChange={handleChange}
+								fullWidth
+							/>
+						</Grid>
+						<Grid item xs={12} md={2}>
+							<Button onClick={handleSubmit}>Send</Button>
+						</Grid>
+					</Grid>
+				</form>
+			</Container>
+		</div>
 	)
 
 	// return loading ? <CircularProgress size={40} position="static" /> : (
@@ -81,23 +126,23 @@ const Chat = (props) => {
 	// 				))
 	// 			}
 	// 		</div>
-	// 		<Container component="main">
-	// 			<form noValidate>
-	// 				<Grid container className={classes.input}>
-	// 					<Grid item xs={12} md={10}>
-	// 						<TextField 
-	// 							name="text" 
-	// 							value={text} 
-	// 							onChange={handleChange}
-	// 							fullWidth
-	// 						/>
-	// 					</Grid>
-	// 					<Grid item xs={12} md={2}>
-	// 						<Button onClick={handleSubmit}>Send</Button>
-	// 					</Grid>
-	// 				</Grid>
-	// 			</form>
-	// 		</Container>
+			// <Container component="main">
+			// 	<form noValidate>
+			// 		<Grid container className={classes.input}>
+			// 			<Grid item xs={12} md={10}>
+			// 				<TextField 
+			// 					name="text" 
+			// 					value={text} 
+			// 					onChange={handleChange}
+			// 					fullWidth
+			// 				/>
+			// 			</Grid>
+			// 			<Grid item xs={12} md={2}>
+			// 				<Button onClick={handleSubmit}>Send</Button>
+			// 			</Grid>
+			// 		</Grid>
+			// 	</form>
+			// </Container>
 	// 	</div>
 	// );
 }
