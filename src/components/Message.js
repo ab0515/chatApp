@@ -1,18 +1,20 @@
 import React from 'react';
-import { Typography } from '@material-ui/core';
+import { Typography, Avatar } from '@material-ui/core';
 import withStyles from '@material-ui/core/styles/withStyles';
 
 const styles = (theme) => ({
-
+	box: {
+		display: 'flex'
+	}
 });
 
 const Message = (props) => {
-	const { classes, data, side } = props;
+	const { classes, data } = props;
 
 	return (
-		<div styles={{float: side}}>
-			<Typography>{data.sender[0]}</Typography>
-			<Typography variant="body1">{data.text}</Typography>
+		<div className={classes.box}>
+			<Avatar>{data.username[0]}</Avatar>
+			<Typography>{data.text}</Typography>
 		</div>
 	);
 };

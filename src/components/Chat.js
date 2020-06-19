@@ -10,10 +10,15 @@ import withStyles from '@material-ui/core/styles/withStyles';
 const styles = (theme) => ({
 	input: {
 		display: 'flex',
+		flex: 1,
+		flexDirection: 'column'
 	},
 	msgArea: {
 		height: 500
 	},
+	curUser: {
+		float: 'right'
+	}
 });
 
 const Chat = (props) => {
@@ -91,8 +96,10 @@ const Chat = (props) => {
 		<div>
 			<div className={classes.msgArea}>
 				{
-					chats.map(chat => (
-						<li key={chat.sentAt}>{chat.text}</li>
+					chats.map((chat, id) => (
+						chat.sender === sender ?
+							<Message className={classes.curUser} key={chat.sentAt} data={chat} /> : 
+							<Message key={chat.sentAt} data={chat} />
 					))
 				}
 			</div>
@@ -115,36 +122,6 @@ const Chat = (props) => {
 			</Container>
 		</div>
 	)
-
-	// return loading ? <CircularProgress size={40} position="static" /> : (
-	// 	<div>
-	// 		<div className={classes.msgArea}>
-	// 			{
-	// 				chats.map(chat => (
-	// 					chat.sender === sender 
-	// 					? <Message key={chat.uid} data={chat} side="right"/> : <Message key={chat.uid} data={chat} side="left"/>
-	// 				))
-	// 			}
-	// 		</div>
-			// <Container component="main">
-			// 	<form noValidate>
-			// 		<Grid container className={classes.input}>
-			// 			<Grid item xs={12} md={10}>
-			// 				<TextField 
-			// 					name="text" 
-			// 					value={text} 
-			// 					onChange={handleChange}
-			// 					fullWidth
-			// 				/>
-			// 			</Grid>
-			// 			<Grid item xs={12} md={2}>
-			// 				<Button onClick={handleSubmit}>Send</Button>
-			// 			</Grid>
-			// 		</Grid>
-			// 	</form>
-			// </Container>
-	// 	</div>
-	// );
 }
 
 export default withStyles(styles)(Chat);
