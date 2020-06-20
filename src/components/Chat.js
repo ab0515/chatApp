@@ -10,15 +10,16 @@ import withStyles from '@material-ui/core/styles/withStyles';
 const styles = (theme) => ({
 	input: {
 		display: 'flex',
-		flex: 1,
-		flexDirection: 'column'
 	},
 	msgArea: {
-		height: 500
+		height: 600
 	},
 	curUser: {
-		float: 'right'
-	}
+		float: 'right',
+	},
+	message: {
+		clear: 'both',
+	},
 });
 
 const Chat = (props) => {
@@ -31,6 +32,24 @@ const Chat = (props) => {
 	const [chats, setChats] = useState('');
 	const [loading, setLoading] = useState(true);
 	const [sender, setSender] = useState('');
+
+	// useEffect(() => {
+	// 	setSender('charlie');
+	// 	setChats([{
+	// 		text:'this is message 1',
+	// 		sender: 'lily',
+	// 		sentAt: '2020-06-20T00:02:15.732Z'
+	// 	}, {
+	// 		text: 'hello this is line 2',
+	// 		sender: 'lily',
+	// 		sentAt: '2020-06-20T00:04:15.732Z'
+	// 	}, {
+	// 		text: 'lets have a party',
+	// 		sender: 'charlie',
+	// 		sentAt: '2020-06-20T00:05:22.732Z',
+	// 	}]);
+	// 	setLoading(false);
+	// }, [])
 
 	useEffect(() => {
 		let name;
@@ -49,14 +68,9 @@ const Chat = (props) => {
 			},
 			error: () => setError('Message loading failed')
 		});
-			// .onSnapshot(snap => {
-			// const data = snap.docs.map(doc => doc.data());
-			// console.log(data);
-			// setChats(data);
-		// });
 
 		return unsubscribe;
-	}, [location]);
+	}, [location, user.uid]);
 
 	useEffect(() => {
 		getUser(user.uid)
@@ -68,7 +82,7 @@ const Chat = (props) => {
 			.catch(err => {
 				console.log('Error retrieving user data', err);
 			});
-	}, []);
+	}, [user.uid]);
 
 	const handleChange = (e) => {
 		setText(e.target.value);
@@ -94,16 +108,21 @@ const Chat = (props) => {
 
 	return loading ? <CircularProgress size={40} position="static" /> : (
 		<div>
-			<div className={classes.msgArea}>
-				{
-					chats.map((chat, id) => (
-						chat.sender === sender ?
-							<Message className={classes.curUser} key={chat.sentAt} data={chat} /> : 
-							<Message key={chat.sentAt} data={chat} />
-					))
-				}
-			</div>
-			<Container component="main">
+			<Container component="main" className={classes.msgArea}>
+				<Grid container>
+					<Grid item xs={12} md={10}>
+						{
+							chats.map((chat) => (
+								chat.sender === sender ?
+									<div className={`${classes.curUser} ${classes.message}`}><Message key={chat.sentAt} data={chat} backgroundColor='#6FB5D8' isCurUser={true} /></div> : 
+										<div className={classes.message}><Message key={chat.sentAt} data={chat} backgroundColor='#ffebee' isCurUser={false} /></div>
+							))
+						}
+					</Grid>
+				</Grid>
+			</Container>
+
+			<Container component="div">
 				<form noValidate>
 					<Grid container className={classes.input}>
 						<Grid item xs={12} md={10}>
