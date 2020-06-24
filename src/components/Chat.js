@@ -77,7 +77,7 @@ const Chat = (props) => {
 			.then(doc => {
 				let data = doc.data();
 				console.log(data);
-				setSender(data.username);
+				setSender(data);
 			})
 			.catch(err => {
 				console.log('Error retrieving user data', err);
@@ -93,7 +93,7 @@ const Chat = (props) => {
 		let data = {
 			text: text,
 			sentAt: new Date().toISOString(),
-			sender: sender
+			sender: sender.username
 		};
 
 		saveMessage(roomName, data)
@@ -114,8 +114,15 @@ const Chat = (props) => {
 						{
 							chats.map((chat) => (
 								chat.sender === sender ?
-									<div className={`${classes.curUser} ${classes.message}`}><Message key={chat.sentAt} data={chat} backgroundColor='#6FB5D8' isCurUser={true} /></div> : 
-										<div className={classes.message}><Message key={chat.sentAt} data={chat} backgroundColor='#ffebee' isCurUser={false} /></div>
+									(
+										<div className={`${classes.curUser} ${classes.message}`}>
+											<Message key={chat.sentAt} data={chat} profileUrl={sender.imageAsFile} backgroundColor='#6FB5D8' isCurUser={true} />
+										</div>
+									) : (
+										<div className={classes.message}>
+											<Message key={chat.sentAt} data={chat} profileUrl={sender.imageAsFile} backgroundColor='#ffebee' isCurUser={false} />
+										</div>
+									)
 							))
 						}
 					</Grid>

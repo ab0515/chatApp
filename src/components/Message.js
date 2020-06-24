@@ -19,7 +19,7 @@ const styles = (theme) => ({
 });
 
 const Message = (props) => {
-	const { classes, data, backgroundColor, isCurUser } = props;
+	const { classes, data, backgroundColor, isCurUser, profileUrl } = props;
 
 	return isCurUser ? (
 		<div className={classes.box}>
@@ -27,7 +27,7 @@ const Message = (props) => {
 		</div>
 	) : (
 		<div className={classes.box}>
-			<Avatar className={classes.profile}>{data.sender[0]}</Avatar>
+			<Avatar className={classes.profile} src={profileUrl} alt={data.sender[0]}></Avatar>
 			<Typography className={classes.textArea} style={{backgroundColor}}>{data.text}</Typography>
 		</div>
 	);

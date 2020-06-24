@@ -11,12 +11,15 @@ const styles = (theme) => ({
 	title: {
 		flexGrow: 1,
 	},
+	appbar: {
+		zIndex: theme.zIndex.drawer + 1
+	}
 });
 
 const NavBar = (props) => {
 	const history = useHistory();
 	const location = useLocation();
-	const { classes } = props;
+	const { classes, authenticated } = props;
 
 	const handleLogout = async (e) => {
 		e.preventDefault();
@@ -30,10 +33,10 @@ const NavBar = (props) => {
 	} else {
 		return (
 			<div className={classes.root}>
-				<AppBar position="static">
+				<AppBar position="relative" className={classes.appbar}>
 					<Toolbar>
 						<Typography variant="h6" className={classes.title}>LetsChat</Typography>
-						<Button color="inherit" onClick={handleLogout}>Log Out</Button>
+						<Button color="inherit" onClick={handleLogout}>{authenticated ? 'Log out' : 'Log in'}</Button>
 					</Toolbar>
 				</AppBar>
 			</div>
