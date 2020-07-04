@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Redirect, useHistory, useLocation } from 'react-router-dom';
+import { Redirect, useHistory, useLocation, Link } from 'react-router-dom';
 import { AppBar, Toolbar, Typography, Button } from '@material-ui/core';
 import withStyles from '@material-ui/core/styles/withStyles';
 import { signout } from '../util/auth';
@@ -28,6 +28,10 @@ const NavBar = (props) => {
 		history.push('/login');
 	};
 
+	const handleLogo = e => {
+		history.push('/dashboard');
+	};
+
 	if (location.pathname === '/signup' || location.pathname === '/login') {
 		return false;
 	} else {
@@ -35,7 +39,7 @@ const NavBar = (props) => {
 			<div className={classes.root}>
 				<AppBar position="relative" className={classes.appbar}>
 					<Toolbar>
-						<Typography variant="h6" className={classes.title}>LetsChat</Typography>
+						<Button className={classes.title} onClick={handleLogo}>LetsChat</Button>
 						<Button color="inherit" onClick={handleLogout}>{authenticated ? 'Log out' : 'Log in'}</Button>
 					</Toolbar>
 				</AppBar>

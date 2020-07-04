@@ -8,19 +8,27 @@ import NavBar from './components/NavBar';
 import Dashboard from './pages/Dashboard';
 import Chat from './components/Chat';
 
+import './App.css';
+
 import { auth } from './services/firebase';
 import { CircularProgress } from '@material-ui/core';
 import createMuiTheme from '@material-ui/core/styles/createMuiTheme';
 import { ThemeProvider as MuiThemeProvider } from '@material-ui/core/styles';
 
+import './assets/css/fonts.css';
+
 const theme = createMuiTheme({
   palette: {
     primary: {
       light: '#e6ee9c',
-      main: '#c0ca33',
+      main: '#45046a',
       dark: '#afb42b',
       contrastText: '#fff'
     }
+  },
+  typography: {
+    fontFamily: 
+      '"Open Sans',
   }
 });
 
@@ -79,8 +87,8 @@ function App() {
         <Switch>
           <Route exact path="/" component={Home} />
           <PrivateRoute path="/dashboard" authenticated={authenticated} component={Dashboard} />
-          {/* <PrivateRoute path="/room" authenticated={authenticated} component={Room} /> */}
-          {/* <PrivateRoute path="/t/:username" authenticated={authenticated} component={Chat} /> */}
+          <PrivateRoute path="/room" authenticated={authenticated} component={Room} />
+          <PrivateRoute path="/t/:username" authenticated={authenticated} component={Chat} />
           <PublicRoute path="/signup" authenticated={authenticated} component={Signup} />
           <PublicRoute path="/login" authenticated={authenticated} component={Login} />
         </Switch>

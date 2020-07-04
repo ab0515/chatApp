@@ -3,7 +3,6 @@ import { getUser, useAuth } from '../util/db';
 
 import Room from '../pages/Room';
 import Account from '../pages/Account';
-import { authMiddleWare } from '../util/auth';
 
 import withStyles from '@material-ui/core/styles/withStyles';
 import { Avatar, Divider, Drawer, CircularProgress, Typography } from '@material-ui/core';
@@ -29,7 +28,10 @@ const styles = (theme) => ({
 		justifyContent: 'center',
 		alignItems: 'center'
 	},
-	toolbar: theme.mixins.toolbar
+	toolbar: theme.mixins.toolbar,
+	content: {
+		flexGrow: 1,
+	}
 });
 
 const Dashboard = (props) => {
@@ -50,7 +52,7 @@ const Dashboard = (props) => {
 			.catch(err => {
 				console.log('Error getting user data', err);
 			})
-	}, []);
+	}, [user.uid]);
 
 	const loadUsersPage = (e) => {
 		setState({render: true});
@@ -90,7 +92,9 @@ const Dashboard = (props) => {
 					</ListItem>
 				</List>
 			</Drawer>
-			<div>{state.render ? <Room /> : < Account /> }</div>
+			<main className={classes.content}>
+				{state.render ? <Room /> : < Account /> }
+			</main>
 		</div>
 	)
 };

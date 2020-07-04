@@ -15,6 +15,7 @@ const styles = (theme) => ({
 	root: {},
 	details: {
 		display: 'flex',
+		flexDirection: 'column',
 	},
 	toolbar: theme.mixins.toolbar,
 	uploadButton: {
@@ -29,8 +30,15 @@ const styles = (theme) => ({
 		height: theme.spacing(11),
 	},
 	errorMsg: {
-		color: 'red'
+		color: 'red',
+		paddingLeft: 5,
+		display: 'flex',
+		alignItems: 'center'
 	},
+	error: {
+		display: 'flex',
+		paddingLeft: theme.spacing(1)
+	}
 });
 
 const Account = (props) => {
@@ -60,22 +68,19 @@ const Account = (props) => {
 	const handleImageChange = (e) => {
 		const image = e.target.files[0];
 		setImageAsFile(imageFile => (image));
+		console.log(image);
 	};
 
 	const profilePicHandler = (e) => {
 		e.preventDefault();
-		console.log(imageAsFile);
+
 		if (imageAsFile === '' || imageAsFile === null) {
-			setError(`Not an image, the image file is ${typeof(imageAsFile)}`);
+			setError('Your profile image is missing. Please upload again');
+		} else {
+			postProfilePicture(user.uid, imageAsFile);
+			// window.location.reload();
+			setError('');
 		}
-		postProfilePicture(user.uid, imageAsFile)
-			.then(() => {
-				console.log('successfully uploaded');
-				window.location.reload();
-			})
-			.catch(err => {
-				console.log('Failed');
-			})
 	};
 
 	return (
@@ -112,8 +117,8 @@ const Account = (props) => {
 								)} */}
 							</center>
 							{error ? (
-								<div className={classes.details}> 
-									<ErrorIcon /> <Typography className={classes.errorMsg} variant="body2">{error}</Typography> 
+								<div className={classes.error}> 
+									<ErrorIcon color="error" /> <Typography className={classes.errorMsg} variant="body2">{error}</Typography>
 								</div> 
 							)							
 							: false}

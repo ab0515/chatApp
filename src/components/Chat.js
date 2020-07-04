@@ -4,22 +4,37 @@ import Message from './Message';
 import { auth } from '../services/firebase';
 import { useAuth, getUser, saveMessage, loadMessage } from '../util/db';
 
-import { Container, Button, TextField, Grid, CircularProgress, Typography } from '@material-ui/core';
+import { Container, Button, TextField, Grid, CircularProgress, Typography, IconButton, Paper } from '@material-ui/core';
+import ArrowUpwardIcon from '@material-ui/icons/ArrowUpward';
 import withStyles from '@material-ui/core/styles/withStyles';
 
 const styles = (theme) => ({
-	input: {
-		display: 'flex',
-	},
 	msgArea: {
 		height: 600
-	},
+	}, 
 	curUser: {
 		float: 'right',
-	},
+	}, 
 	message: {
 		clear: 'both',
-	},
+	}, 
+	sendButton: {
+		backgroundColor: '#390099',
+		color: 'white',
+		padding: 9,
+	}, 
+	textbox: {
+		padding: 12,
+	}, 
+	btnSection: {
+		display: 'flex',
+		alignItems: 'center',
+		paddingLeft: 12,
+	}, 
+	centerTexts: {
+		display: 'flex',
+		justifyContent: 'center'
+	}
 });
 
 const Chat = (props) => {
@@ -33,24 +48,6 @@ const Chat = (props) => {
 	const [loading, setLoading] = useState(true);
 	const [sender, setSender] = useState('');
 
-	// useEffect(() => {
-	// 	setSender('charlie');
-	// 	setChats([{
-	// 		text:'this is message 1',
-	// 		sender: 'lily',
-	// 		sentAt: '2020-06-20T00:02:15.732Z'
-	// 	}, {
-	// 		text: 'hello this is line 2',
-	// 		sender: 'lily',
-	// 		sentAt: '2020-06-20T00:04:15.732Z'
-	// 	}, {
-	// 		text: 'lets have a party',
-	// 		sender: 'charlie',
-	// 		sentAt: '2020-06-20T00:05:22.732Z',
-	// 	}]);
-	// 	setLoading(false);
-	// }, [])
-
 	useEffect(() => {
 		let name;
 		if (user.uid < location.state.receiver) {
@@ -60,9 +57,11 @@ const Chat = (props) => {
 		}
 
 		setRoomName(name);
+
 		const unsubscribe = loadMessage(name, {
 			next: querySnapShot => {
 				const updatedData = querySnapShot.docs.map(snapshot => snapshot.data());
+				console.log(updatedData);
 				setChats(updatedData);
 				setLoading(false);
 			},
@@ -76,7 +75,6 @@ const Chat = (props) => {
 		getUser(user.uid)
 			.then(doc => {
 				let data = doc.data();
-				console.log(data);
 				setSender(data);
 			})
 			.catch(err => {
@@ -109,41 +107,55 @@ const Chat = (props) => {
 	return loading ? <CircularProgress size={40} position="static" /> : (
 		<div>
 			<Container component="main" className={classes.msgArea}>
-				<Grid container>
-					<Grid item xs={12} md={10}>
+				<Grid container className={classes.centerTexts}>
+					<Grid item xs={8} md={8}>
+						{/* <Paper> */}
 						{
 							chats.map((chat) => (
-								chat.sender === sender ?
+								chat.sender === sender.username ?
 									(
 										<div className={`${classes.curUser} ${classes.message}`}>
-											<Message key={chat.sentAt} data={chat} profileUrl={sender.imageAsFile} backgroundColor='#6FB5D8' isCurUser={true} />
+											<Message key={chat.sentAt} 
+														data={chat} profileUrl={sender.imageAsUrl} 
+														backgroundColor='#e9c46a' 
+														isCurUser={true} />
 										</div>
 									) : (
 										<div className={classes.message}>
-											<Message key={chat.sentAt} data={chat} profileUrl={sender.imageAsFile} backgroundColor='#ffebee' isCurUser={false} />
+											<Message key={chat.sentAt} 
+														data={chat} 
+														profileUrl={sender.imageAsUrl} 
+														backgroundColor='#ffebee' 
+														isCurUser={false} />
 										</div>
 									)
 							))
 						}
+						{/* </Paper> */}
 					</Grid>
 				</Grid>
 			</Container>
 
 			<Container component="div">
 				<form noValidate>
-					<Grid container className={classes.input}>
-						<Grid item xs={12} md={10}>
+					<Grid container className={classes.centerTexts}>
+                        <Grid item xs={8} md={7} className={classes.textbox}>
 							<TextField 
-								name="text" 
-								value={text} 
-								onChange={handleChange}
-								fullWidth
-							/>
-						</Grid>
-						<Grid item xs={12} md={2}>
-							<Button onClick={handleSubmit}>Send</Button>
-						</Grid>
-					</Grid>
+								className={classes.textbox}
+                                name="text" 
+                                value={text} 
+                                onChange={handleChange}
+                                fullWidth
+								variant="outlined"
+                            />
+                        </Grid>
+                        <Grid item xs={8} md={1} className={classes.btnSection}>
+                            <Button className={classes.sendButton} disabled={!text} fullWidth variant="contained" color="inherit" onClick={handleSubmit}>Send</Button>
+                            {/* <IconButton className={classes.sendButton} onClick={handleSubmit}>
+                                <ArrowUpwardIcon fontSize="small" />
+                            </IconButton> */}
+                        </Grid>
+                    </Grid>
 				</form>
 			</Container>
 		</div>
