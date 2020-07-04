@@ -147,6 +147,7 @@ const Chat = (props) => {
                                 onChange={handleChange}
                                 fullWidth
 								variant="outlined"
+								autoComplete="off"
                             />
                         </Grid>
                         <Grid item xs={8} md={1} className={classes.btnSection}>

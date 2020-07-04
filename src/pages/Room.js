@@ -1,25 +1,39 @@
 import React, { useEffect, useState } from 'react';
+import { Link } from 'react-router-dom';
 import { getUsers, useAuth, getUser } from '../util/db';
 
-import { Card, CardContent, Typography, CardActionArea, Divider, Avatar } from '@material-ui/core';
+import { Card, CardContent, Typography, CardActionArea, Button, Avatar } from '@material-ui/core';
 import { CircularProgress } from '@material-ui/core';
 import withStyles from '@material-ui/core/styles/withStyles';
-import { Link } from 'react-router-dom';
+import MessageOutlinedIcon from '@material-ui/icons/MessageOutlined';
 
 const styles = (theme) => ({
+	overrides: {
+		MuiCardContent: {
+			root: {
+					padding: 0,
+					"&:last-child": {
+					paddingBottom: 0,
+				},
+			},
+		},
+	},
 	root: {
 		display: 'flex',
 		flexDirection: 'column'
 	},
 	cards: {
-		margin: theme.spacing(3)
+		marginLeft: theme.spacing(3),
+		marginBottom: theme.spacing(2),
+		width: 300,
+	},
+	cardcontent: {
+		padding: 12,
+		display: 'flex',
+		alignItems: 'center',
 	},
 	usernames: {
 		textDecoration: 'none'
-	},
-	userslist: {
-		display: 'flex',
-		alignItems: 'center',
 	},
 	black: {
 		color: 'black',
@@ -28,6 +42,9 @@ const styles = (theme) => ({
 	title: {
 		paddingLeft: 23,
 		paddingTop: 5
+	},
+	sendIcon: {
+		float: 'right',
 	}
 });
 
@@ -84,33 +101,48 @@ const Room = (props) => {
 	}
 
 	const ListUsers = (props) => {
+		const {backgroundColor, userid, username, profile} = props;
 		return (
 			<>
-				<Card key={props.userid} className={classes.cards}>
+				<Card key={userid} className={classes.cards} style={{backgroundColor}}>
+					<CardContent className={classes.cardcontent}>
+						
+							<Avatar src={profile}></Avatar>
+							<Typography className={classes.black}>{username}</Typography>
+							<Link key={userid} className={classes.usernames}
+								to={{pathname: `/t/${username}`, state: { receiver: userid }}}>
+									<Button>Message</Button>
+							</Link>
+					</CardContent>
+				</Card>
+				{/* <Card key={userid} className={classes.cards} style={{backgroundColor}}>
 					<CardActionArea>
 						<CardContent>
-						<Link key={props.userid} className={classes.usernames}
-							to={{pathname: `/t/${props.username}`, state: { receiver: props.userid }}}>
+						<Link key={userid} className={classes.usernames}
+							to={{pathname: `/t/${username}`, state: { receiver: userid }}}>
 								<div className={classes.userslist}>
-									<Avatar src={props.profile}></Avatar>
-									<Typography className={classes.black}>{props.username}</Typography>
+									<Avatar src={profile}></Avatar>
+									<Typography className={classes.black}>{username}</Typography>
 								</div>
 							</Link>
 						</CardContent>
 					</CardActionArea>
-				</Card>
+				</Card> */}
 			</>
 		);
 	}
 
 	return loading ? <CircularProgress size={40} /> : (
 		<div className={classes.root}>
-			<ListUsers userid={user.uid} username={curUser.username} profile={curUser.imageAsUrl}></ListUsers>
-			<Divider />
 			<Typography className={classes.title} variant="body1" color="textSecondary">Users</Typography>
 			{users.map(member => {
 				if (member.userid !== user.uid) {
-					return <ListUsers key={member.userid} userid={member.userid} username={member.username} profile={member.imageAsUrl}></ListUsers>
+					return <ListUsers 
+								backgroundColor='#ade8f4'
+								key={member.userid} 
+								userid={member.userid} 
+								username={member.username} 
+								profile={member.imageAsUrl} />
 				}
 			})}
 		</div>
