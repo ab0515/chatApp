@@ -21,14 +21,14 @@ const theme = createMuiTheme({
   palette: {
     primary: {
       light: '#e6ee9c',
-      main: '#45046a',
+      main: '#231942',
       dark: '#afb42b',
       contrastText: '#fff'
     }
   },
   typography: {
     fontFamily: 
-      '"Open Sans',
+      '"Open Sans"',
   }
 });
 
@@ -50,7 +50,7 @@ function PublicRoute({ component: Component, authenticated, ...rest }) {
       {...rest}
       render={props => authenticated === false 
         ? <Component {...props} /> 
-        : <Redirect to='/dashboard' />
+        : <Redirect to='/' />
       }
     />
   );
@@ -85,8 +85,8 @@ function App() {
       <Router>
         <NavBar authenticated={authenticated} />
         <Switch>
-          <Route exact path="/" component={Home} />
-          <PrivateRoute path="/dashboard" authenticated={authenticated} component={Dashboard} />
+          {/* <Route exact path="/" component={Home} /> */}
+          <PrivateRoute exact path="/" authenticated={authenticated} component={Dashboard} />
           <PrivateRoute path="/room" authenticated={authenticated} component={Room} />
           <PrivateRoute path="/t/:username" authenticated={authenticated} component={Chat} />
           <PublicRoute path="/signup" authenticated={authenticated} component={Signup} />

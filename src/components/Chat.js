@@ -61,7 +61,7 @@ const Chat = (props) => {
 		const unsubscribe = loadMessage(name, {
 			next: querySnapShot => {
 				const updatedData = querySnapShot.docs.map(snapshot => snapshot.data());
-				console.log(updatedData);
+
 				setChats(updatedData);
 				setLoading(false);
 			},
@@ -114,14 +114,14 @@ const Chat = (props) => {
 							chats.map((chat) => (
 								chat.sender === sender.username ?
 									(
-										<div className={`${classes.curUser} ${classes.message}`}>
+										<div key={chat.sentAt} className={`${classes.curUser} ${classes.message}`}>
 											<Message key={chat.sentAt} 
 														data={chat} profileUrl={sender.imageAsUrl} 
 														backgroundColor='#e9c46a' 
 														isCurUser={true} />
 										</div>
 									) : (
-										<div className={classes.message}>
+										<div key={chat.sentAt} className={classes.message}>
 											<Message key={chat.sentAt} 
 														data={chat} 
 														profileUrl={sender.imageAsUrl} 

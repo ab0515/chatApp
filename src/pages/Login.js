@@ -19,7 +19,7 @@ const styles = (theme) => ({
 		alignItems: 'center',
 		paddingTop: theme.spacing(3),
 		height: '100%',
-		backgroundImage: 'linear-gradient(45deg, #7ef29d, #0f68a9)'
+		backgroundImage: 'linear-gradient(30deg, #eeb86d,#9bafd9,#114b5f)'
 	},
 	formclass: {
 		margin: theme.spacing(2),
@@ -40,11 +40,14 @@ const styles = (theme) => ({
 	},
 	loginForm: {
 		width: 500,
-		height: 400,
+		height: 350,
 		display: 'flex',
 		alignItems: 'center',
 		padding: 20,
 	},
+	loginText: {
+		marginBottom: 20,
+	}
 });
 
 const Login = (props) => {
@@ -97,7 +100,7 @@ const Login = (props) => {
 				<Container component="main" maxWidth="xs">
 					<form noValidate>
 						<div className={classes.formclass}>
-							<Typography variant="h6">Login</Typography>
+							<Typography variant="h6" className={classes.loginText}>Login</Typography>
 							<Snackbar open={errorOpen} 
 										autoHideDuration={6000} 
 										onClose={handleClose} 

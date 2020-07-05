@@ -1,23 +1,14 @@
 import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { getUsers, useAuth, getUser } from '../util/db';
+import LinkButton from '../components/LinkButton';
 
-import { Card, CardContent, Typography, CardActionArea, Button, Avatar } from '@material-ui/core';
+import { Card, CardContent, Typography, Button, Avatar, Grid } from '@material-ui/core';
 import { CircularProgress } from '@material-ui/core';
 import withStyles from '@material-ui/core/styles/withStyles';
 import MessageOutlinedIcon from '@material-ui/icons/MessageOutlined';
 
 const styles = (theme) => ({
-	overrides: {
-		MuiCardContent: {
-			root: {
-					padding: 0,
-					"&:last-child": {
-					paddingBottom: 0,
-				},
-			},
-		},
-	},
 	root: {
 		display: 'flex',
 		flexDirection: 'column'
@@ -26,11 +17,16 @@ const styles = (theme) => ({
 		marginLeft: theme.spacing(3),
 		marginBottom: theme.spacing(2),
 		width: 300,
+		display: 'flex',
 	},
 	cardcontent: {
 		padding: 12,
+		'&:last-child': {
+			paddingBottom: 12,
+		},
 		display: 'flex',
 		alignItems: 'center',
+		width: '100%',
 	},
 	usernames: {
 		textDecoration: 'none'
@@ -45,7 +41,17 @@ const styles = (theme) => ({
 	},
 	sendIcon: {
 		float: 'right',
-	}
+	},
+	sendBtn: {
+		display: 'flex',
+		justifyContent: 'center',
+		alignItems: 'center',
+		fontSize: 12,
+	},
+	verticalCenter: {
+		display: 'flex',
+		alignItems: 'center',
+	},
 });
 
 const Room = (props) => {
@@ -72,7 +78,6 @@ const Room = (props) => {
 		})
 		.then(temp => {
 			if (isSubscribed) {
-				console.log(temp);
 				setUsers(temp);
 				setLoading(false);
 			}
@@ -96,38 +101,27 @@ const Room = (props) => {
 		return () => isSubscribed = false;
 	}, [user.uid]);
 
-	const handleClick = (e) => {
-		console.log('clicked');
-	}
-
 	const ListUsers = (props) => {
 		const {backgroundColor, userid, username, profile} = props;
 		return (
 			<>
-				<Card key={userid} className={classes.cards} style={{backgroundColor}}>
+				<Card key={userid} className={classes.cards} elevation={2}>
 					<CardContent className={classes.cardcontent}>
-						
-							<Avatar src={profile}></Avatar>
-							<Typography className={classes.black}>{username}</Typography>
-							<Link key={userid} className={classes.usernames}
-								to={{pathname: `/t/${username}`, state: { receiver: userid }}}>
-									<Button>Message</Button>
-							</Link>
+						<Grid container justify="space-between">
+							<Grid item className={classes.verticalCenter}>
+								<Avatar src={profile}></Avatar>
+								<Typography className={classes.black}>{username}</Typography>
+							</Grid>
+							<Grid item className={classes.verticalCenter}>
+								<LinkButton
+									className={classes.sendBtn}
+									to={`/t/${username}`}
+									receiver={userid}
+								/>
+							</Grid>
+						</Grid>
 					</CardContent>
 				</Card>
-				{/* <Card key={userid} className={classes.cards} style={{backgroundColor}}>
-					<CardActionArea>
-						<CardContent>
-						<Link key={userid} className={classes.usernames}
-							to={{pathname: `/t/${username}`, state: { receiver: userid }}}>
-								<div className={classes.userslist}>
-									<Avatar src={profile}></Avatar>
-									<Typography className={classes.black}>{username}</Typography>
-								</div>
-							</Link>
-						</CardContent>
-					</CardActionArea>
-				</Card> */}
 			</>
 		);
 	}
@@ -138,7 +132,7 @@ const Room = (props) => {
 			{users.map(member => {
 				if (member.userid !== user.uid) {
 					return <ListUsers 
-								backgroundColor='#ade8f4'
+								backgroundColor='#f7ede2'
 								key={member.userid} 
 								userid={member.userid} 
 								username={member.username} 
