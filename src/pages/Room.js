@@ -1,12 +1,10 @@
 import React, { useEffect, useState } from 'react';
-import { Link } from 'react-router-dom';
 import { getUsers, useAuth, getUser } from '../util/db';
 import LinkButton from '../components/LinkButton';
 
-import { Card, CardContent, Typography, Button, Avatar, Grid } from '@material-ui/core';
+import { Card, CardContent, Typography, Avatar, Grid } from '@material-ui/core';
 import { CircularProgress } from '@material-ui/core';
 import withStyles from '@material-ui/core/styles/withStyles';
-import MessageOutlinedIcon from '@material-ui/icons/MessageOutlined';
 
 const styles = (theme) => ({
 	root: {
@@ -102,21 +100,21 @@ const Room = (props) => {
 	}, [user.uid]);
 
 	const ListUsers = (props) => {
-		const {backgroundColor, userid, username, profile} = props;
+		const { userData } = props;
 		return (
 			<>
-				<Card key={userid} className={classes.cards} elevation={2}>
+				<Card key={userData.userid} className={classes.cards} elevation={2}>
 					<CardContent className={classes.cardcontent}>
 						<Grid container justify="space-between">
 							<Grid item className={classes.verticalCenter}>
-								<Avatar src={profile}></Avatar>
-								<Typography className={classes.black}>{username}</Typography>
+								<Avatar src={userData.imageAsUrl}></Avatar>
+								<Typography className={classes.black}>{userData.username}</Typography>
 							</Grid>
 							<Grid item className={classes.verticalCenter}>
 								<LinkButton
 									className={classes.sendBtn}
-									to={`/t/${username}`}
-									receiver={userid}
+									to={`/t/${userData.username}`}
+									receiver={userData}
 								/>
 							</Grid>
 						</Grid>
@@ -134,9 +132,7 @@ const Room = (props) => {
 					return <ListUsers 
 								backgroundColor='#f7ede2'
 								key={member.userid} 
-								userid={member.userid} 
-								username={member.username} 
-								profile={member.imageAsUrl} />
+								userData={member} />
 				}
 			})}
 		</div>

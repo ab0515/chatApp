@@ -10,7 +10,8 @@ const styles = (theme) => ({
 	},
 	appname: {
 		color: 'white',
-		fontWeight: 'bold'
+		fontWeight: 'bold',
+		fontSize: '1rem',
 	},
 	logoBtn: {
 		display: 'flex',
@@ -49,7 +50,7 @@ const NavBar = (props) => {
 				<AppBar position="relative" className={classes.appbar}>
 					<Toolbar>
 						<Grid container justify="space-between">
-							<Grid item><Button className={classes.appname} onClick={handleLogo}>LetsChat</Button></Grid>
+							<Grid item><Button className={classes.appname} onClick={handleLogo}>Lets Chat</Button></Grid>
 							<Grid item><Button color="inherit" onClick={handleLogout}>{authenticated ? 'Log out' : 'Log in'}</Button></Grid>
 						</Grid>
 					</Toolbar>

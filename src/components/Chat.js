@@ -4,13 +4,19 @@ import Message from './Message';
 import { auth } from '../services/firebase';
 import { useAuth, getUser, saveMessage, loadMessage } from '../util/db';
 
-import { Container, Button, TextField, Grid, CircularProgress, Typography, IconButton, Paper } from '@material-ui/core';
-import ArrowUpwardIcon from '@material-ui/icons/ArrowUpward';
+import { Container, Button, TextField, Grid, CircularProgress, Typography } from '@material-ui/core';
 import withStyles from '@material-ui/core/styles/withStyles';
 
 const styles = (theme) => ({
+	root: {
+		display: 'flex',
+		flexDirection: 'column',
+	},
 	msgArea: {
-		height: 600
+		height: 620,
+		overflow: 'auto',
+		display: 'flex',
+		flexDirection: 'column-reverse'
 	}, 
 	curUser: {
 		float: 'right',
@@ -22,26 +28,37 @@ const styles = (theme) => ({
 		backgroundColor: '#390099',
 		color: 'white',
 		padding: 9,
+		width: 'auto',
+		height: 40,
 	}, 
 	textbox: {
 		padding: 12,
 	}, 
-	btnSection: {
+	centerItems: {
 		display: 'flex',
 		alignItems: 'center',
-		paddingLeft: 12,
+		justifyContent: 'center',
 	}, 
 	centerTexts: {
-		display: 'flex',
 		justifyContent: 'center'
-	}
+	},
+	sendMsgForm: {
+		display: 'flex' ,
+		width: '500px',
+		alignItems: 'center',
+	},
+	chatWidth: {
+		width: 500,
+	},
 });
 
 const Chat = (props) => {
 	const { classes } = props;
 	let location = useLocation();
+	let receiver = location ? location.state.receiver : null;
 	const { initializing, user } = useAuth();
 	const [roomName, setRoomName] = useState('');
+	
 	const [error, setError] = useState('');
 	const [text, setText] = useState('');
 	const [chats, setChats] = useState('');
@@ -50,10 +67,12 @@ const Chat = (props) => {
 
 	useEffect(() => {
 		let name;
-		if (user.uid < location.state.receiver) {
-			name = user.uid + location.state.receiver;
+		// let receiver = location.state.receiver;
+
+		if (user.uid < receiver.userid) {
+			name = user.uid + receiver.userid;
 		} else {
-			name = location.state.receiver + user.uid;
+			name = receiver.userid + user.uid;
 		}
 
 		setRoomName(name);
@@ -91,7 +110,8 @@ const Chat = (props) => {
 		let data = {
 			text: text,
 			sentAt: new Date().toISOString(),
-			sender: sender.username
+			sender: sender.username,
+			profileUrl: sender.imageAsUrl
 		};
 
 		saveMessage(roomName, data)
@@ -105,40 +125,42 @@ const Chat = (props) => {
 	};
 
 	return loading ? <CircularProgress size={40} position="static" /> : (
-		<div>
+		<div className={classes.root}>
 			<Container component="main" className={classes.msgArea}>
 				<Grid container className={classes.centerTexts}>
-					<Grid item xs={8} md={8}>
-						{/* <Paper> */}
+					<Grid item>
+						<Typography>{receiver ? receiver.username : '' }</Typography>
+					</Grid>
+					<Grid item className={classes.chatWidth}>
 						{
 							chats.map((chat) => (
 								chat.sender === sender.username ?
-									(
+									(	
+										// current user
 										<div key={chat.sentAt} className={`${classes.curUser} ${classes.message}`}>
 											<Message key={chat.sentAt} 
-														data={chat} profileUrl={sender.imageAsUrl} 
+														data={chat}
 														backgroundColor='#e9c46a' 
 														isCurUser={true} />
 										</div>
 									) : (
+										// another user
 										<div key={chat.sentAt} className={classes.message}>
 											<Message key={chat.sentAt} 
-														data={chat} 
-														profileUrl={sender.imageAsUrl} 
+														data={chat}  
 														backgroundColor='#ffebee' 
 														isCurUser={false} />
 										</div>
 									)
 							))
 						}
-						{/* </Paper> */}
 					</Grid>
 				</Grid>
 			</Container>
 
-			<Container component="div">
-				<form noValidate>
-					<Grid container className={classes.centerTexts}>
+			<Container component="div" className={classes.centerItems}>
+				<form noValidate className={classes.sendMsgForm}>
+					{/* <Grid container className={classes.centerTexts}>
                         <Grid item xs={8} md={7} className={classes.textbox}>
 							<TextField 
 								className={classes.textbox}
@@ -150,13 +172,25 @@ const Chat = (props) => {
 								autoComplete="off"
                             />
                         </Grid>
-                        <Grid item xs={8} md={1} className={classes.btnSection}>
+                        <Grid item xs={8} md={1}>
                             <Button className={classes.sendButton} disabled={!text} fullWidth variant="contained" color="inherit" onClick={handleSubmit}>Send</Button>
-                            {/* <IconButton className={classes.sendButton} onClick={handleSubmit}>
-                                <ArrowUpwardIcon fontSize="small" />
-                            </IconButton> */}
                         </Grid>
-                    </Grid>
+                    </Grid> */}
+
+						<TextField 
+							className={classes.textbox} fullWidth
+							name="text" value={text} 
+							onChange={handleChange}
+							variant="outlined"
+							autoComplete="off"
+						/>
+						<Button 
+							className={classes.sendButton} fullWidth
+							disabled={!text}  
+							variant="contained" color="inherit" 
+							onClick={handleSubmit}>
+						Send
+						</Button>
 				</form>
 			</Container>
 		</div>
