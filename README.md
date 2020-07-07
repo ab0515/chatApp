@@ -1,3 +1,7 @@
+**letschat** is web-based messaging application.<br />
+Preview:
+![](chatappDemo.gif)
+
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 
 ## Available Scripts
