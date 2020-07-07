@@ -1,10 +1,12 @@
 import React, { useEffect, useState } from 'react';
-import { useLocation } from 'react-router-dom';
+import { useLocation, useHistory } from 'react-router-dom';
 import Message from './Message';
 import { auth } from '../services/firebase';
 import { useAuth, getUser, saveMessage, loadMessage } from '../util/db';
 
-import { Container, Button, TextField, Grid, CircularProgress, Typography } from '@material-ui/core';
+import { Container, Button, TextField, Grid, CircularProgress, Typography, IconButton, Divider } from '@material-ui/core';
+import ArrowBackIcon from '@material-ui/icons/ArrowBack';
+import ViewHeadlineIcon from '@material-ui/icons/ViewHeadline';
 import withStyles from '@material-ui/core/styles/withStyles';
 
 const styles = (theme) => ({
@@ -13,11 +15,11 @@ const styles = (theme) => ({
 		flexDirection: 'column',
 	},
 	msgArea: {
-		height: 620,
 		overflow: 'auto',
 		display: 'flex',
-		flexDirection: 'column-reverse'
-	}, 
+		flexDirection: 'column-reverse',
+		height: '70vh',
+	},
 	curUser: {
 		float: 'right',
 	}, 
@@ -34,7 +36,7 @@ const styles = (theme) => ({
 	textbox: {
 		padding: 12,
 	}, 
-	centerItems: {
+	footer: {
 		display: 'flex',
 		alignItems: 'center',
 		justifyContent: 'center',
@@ -50,11 +52,32 @@ const styles = (theme) => ({
 	chatWidth: {
 		width: 500,
 	},
+	header: {
+		display: 'flex',
+		justifyContent: 'space-between',
+		position: 'relative',
+		padding: 10,
+		paddingRight: 15,
+		alignItems: 'center',
+	},
+	goBackBtn: {
+		justifyContent: 'end',
+	},
+	receiverName: {
+		fontWeight: 'bold',
+	},
+	footer: {
+		bottom: 0,
+		position: 'absolute',
+		display: 'flex',
+		justifyContent: 'center',
+	},
 });
 
 const Chat = (props) => {
 	const { classes } = props;
 	let location = useLocation();
+	const history = useHistory();
 	let receiver = location ? location.state.receiver : null;
 	const { initializing, user } = useAuth();
 	const [roomName, setRoomName] = useState('');
@@ -107,11 +130,12 @@ const Chat = (props) => {
 
 	const handleSubmit = (e) => {
 		e.preventDefault();
+		let profileUrl = sender.imageAsUrl ? sender.imageAsUrl : '';
 		let data = {
 			text: text,
 			sentAt: new Date().toISOString(),
 			sender: sender.username,
-			profileUrl: sender.imageAsUrl
+			profileUrl: profileUrl
 		};
 
 		saveMessage(roomName, data)
@@ -124,13 +148,28 @@ const Chat = (props) => {
 			});
 	};
 
+	const handleGoBack = (e) => {
+		history.push('/');
+	};
+
 	return loading ? <CircularProgress size={40} position="static" /> : (
 		<div className={classes.root}>
-			<Container component="main" className={classes.msgArea}>
+			{/* header */}
+			<Container component="div" className={classes.header}>
+				<IconButton onClick={handleGoBack} className={classes.goBackBtn}>
+					<ArrowBackIcon />
+				</IconButton>
+				<div className={classes.receiverName}>
+					<Typography variant="subtitle1" className={classes.receiverName}>
+						{receiver ? receiver.username : '' }
+					</Typography>
+				</div>
+				<ViewHeadlineIcon />
+			</Container>
+			<Divider />
+			{/* main */}
+			<Container component="div" className={classes.msgArea}>
 				<Grid container className={classes.centerTexts}>
-					<Grid item>
-						<Typography>{receiver ? receiver.username : '' }</Typography>
-					</Grid>
 					<Grid item className={classes.chatWidth}>
 						{
 							chats.map((chat) => (
@@ -158,39 +197,24 @@ const Chat = (props) => {
 				</Grid>
 			</Container>
 
-			<Container component="div" className={classes.centerItems}>
+			{/* footer */}
+			<Container component="div" className={classes.footer}>
 				<form noValidate className={classes.sendMsgForm}>
-					{/* <Grid container className={classes.centerTexts}>
-                        <Grid item xs={8} md={7} className={classes.textbox}>
-							<TextField 
-								className={classes.textbox}
-                                name="text" 
-                                value={text} 
-                                onChange={handleChange}
-                                fullWidth
-								variant="outlined"
-								autoComplete="off"
-                            />
-                        </Grid>
-                        <Grid item xs={8} md={1}>
-                            <Button className={classes.sendButton} disabled={!text} fullWidth variant="contained" color="inherit" onClick={handleSubmit}>Send</Button>
-                        </Grid>
-                    </Grid> */}
-
-						<TextField 
-							className={classes.textbox} fullWidth
-							name="text" value={text} 
-							onChange={handleChange}
-							variant="outlined"
-							autoComplete="off"
-						/>
-						<Button 
-							className={classes.sendButton} fullWidth
-							disabled={!text}  
-							variant="contained" color="inherit" 
-							onClick={handleSubmit}>
+					<TextField 
+						className={classes.textbox} fullWidth
+						name="text" value={text} 
+						onChange={handleChange}
+						variant="outlined"
+						autoComplete="off"
+					/>
+					<Button 
+						className={classes.sendButton} fullWidth
+						disabled={!text}  
+						variant="contained" color="inherit" 
+						onClick={handleSubmit}
+					>
 						Send
-						</Button>
+					</Button>
 				</form>
 			</Container>
 		</div>

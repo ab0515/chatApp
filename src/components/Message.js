@@ -27,12 +27,16 @@ const styles = (theme) => ({
 		fontSize: 24,
 		fontWeight: 'bold',
 		margin: 20,
-		fontFamily: 'Coda Caption',
+		fontFamily: 'Arimo', 
+	},
+	textWidth: {
+		maxWidth: 200,
 	},
 });
 
 const Message = (props) => {
 	const { classes, data, backgroundColor, isCurUser } = props;
+
 	const [open, setOpen] = useState(false);
 
 	const handleAvatar = () => {
@@ -45,7 +49,7 @@ const Message = (props) => {
 
 	const Text = () => {
 		return (
-			<div>
+			<div className={classes.textWidth}>
 				<Tooltip title={data.sentAt}>
 					<Typography className={classes.textArea} style={{backgroundColor}}>{data.text}</Typography>
 				</Tooltip>

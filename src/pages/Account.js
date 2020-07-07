@@ -68,7 +68,6 @@ const Account = (props) => {
 	const handleImageChange = (e) => {
 		const image = e.target.files[0];
 		setImageAsFile(imageFile => (image));
-		console.log(image);
 	};
 
 	const profilePicHandler = (e) => {
@@ -77,9 +76,13 @@ const Account = (props) => {
 		if (imageAsFile === '' || imageAsFile === null) {
 			setError('Your profile image is missing. Please upload again');
 		} else {
-			postProfilePicture(user.uid, imageAsFile);
-			// window.location.reload();
-			setError('');
+			try {
+				postProfilePicture(user.uid, imageAsFile);
+				// window.location.reload();
+				setError('');
+			} catch (e) {
+				throw new Error('Error while uploading a new image');
+			}
 		}
 	};
 

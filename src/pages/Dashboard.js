@@ -45,6 +45,7 @@ const Dashboard = (props) => {
 			.then(doc => {
 				if (doc.exists) {
 					setUserData(doc.data());
+					console.log(doc.data());
 				} else {
 					console.log('User doesn\'t have data');
 				}
