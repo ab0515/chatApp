@@ -1,4 +1,4 @@
-**letschat** is web-based messaging application.<br />
+**letschat** is a web-based messaging application.<br />
 Preview:
 ![](chatappDemo.gif)
 
